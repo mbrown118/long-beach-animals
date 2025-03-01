@@ -6,5 +6,41 @@ editor: visual
 ---
 
 ```{r}
+library(summarytools)
+library(tidyverse)
+library(janitor)
+library(usmap)
 
 ```
+
+```{r}
+longbeach <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-04/longbeach.csv')
+
+```
+
+```{r}
+view(dfSummary(longbeach))
+```
+
+```{r}
+longbeach %>% 
+  tabyl(outcome_type)
+```
+
+```{r}
+longbeach_cats <- longbeach %>%
+  filter(animal_type == "cat")
+
+
+tnr_type <- c("return to wild habitat", "shelter, neuter, return", "trap, neuter, release")
+
+
+## dataframe of cats TNR
+cats_tnr <- longbeach_cats %>% 
+  filter(outcome_type %in% tnr_type)
+  
+
+```
+
+
+
