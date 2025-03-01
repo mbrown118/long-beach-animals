@@ -40,24 +40,83 @@ tnr_type <- c("return to wild habitat", "shelter, neuter, return", "trap, neuter
 ## dataframe of cats TNR
 cats_tnr <- longbeach_cats %>% 
   filter(outcome_type %in% tnr_type)
-  
 
+
+cats_tnr_sites <- cats_tnr %>% 
+  group_by(geopoint, longitude, latitude) %>% 
+  count(geopoint)
+  
 ```
 
 ```{r}
+lbac_cities <- c("LONG BEACH", "CERRITOS", "LOS ALAMITOS", "SIGNAL HILL")
 
+la_county <- read_sf("Los_Angeles_County_Boundary/Cities_and_Communities.shp") %>% 
+  clean_names() %>% 
+  filter(city_comm %in% lbac_cities)
+```
+
+```{r}
 cats_tnr_sf <- st_as_sf(cats_tnr, coords = c('longitude', 'latitude'))
 
 cats_tnr_sf <- st_set_crs(cats_tnr_sf, value = 4326)
 
-long_beach_city <- read_sf("Long-Beach_City_Boundary_Official/CityOfLongBeachCityBoundary.shp")
 
-ggplot(long_beach_city) +
-  geom_sf(color = "black") +
+ggplot() +
+  geom_sf(data = la_county, fill = "grey", alpha = 0.3) +
   geom_sf(data = cats_tnr_sf) +
-  theme_void()
+  theme_void() +
+  theme(
+    legend.position = c(1, 0.6),
+    text = element_text(color = "#22211d"),
+    plot.margin = margin(r = 2, l = 2, unit = "cm"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.title = element_text(size = 14, hjust = 0.5, color = "#4e4d47"),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 8)
+  )
 
 
 ```
 
+```{r}
+cats_tnr_sites_sf <- st_as_sf(cats_tnr_sites, coords = c('longitude', 'latitude'))
 
+cats_tnr_sites_sf <- st_set_crs(cats_tnr_sites_sf, value = 4326)
+
+
+# Create breaks for the color scale
+mybreaks <- c(1, 5, 10, 15, 20, 30, 35)
+
+ggplot() +
+  geom_sf(data = la_county, fill = "grey", alpha = 0.3) +
+  geom_sf(data = cats_tnr_sites_sf, aes(size = n, color = n, alpha = n),
+          geom = "point") +
+  scale_size_continuous(
+    name = "Number of Intakes", trans = "log",
+    range = c(1, 8), breaks = mybreaks
+  ) +
+  scale_alpha_continuous(
+    name = "Number of Intakes", trans = "log",
+    range = c(0.1, .9), breaks = mybreaks
+  ) +
+  scale_color_viridis_c(
+    option = "magma", trans = "log",
+    breaks = mybreaks, name = "Number of Intakes"
+  ) +
+  theme_void() +
+  guides(colour = guide_legend()) +
+  theme(
+    # legend.position = c(1, 0.6),
+    text = element_text(color = "#22211d"),
+    plot.margin = margin(r = 2, l = 2, unit = "cm"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.title = element_text(size = 14, hjust = 0.5, color = "#4e4d47"),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 8)
+  ) +
+  ggtitle("Intake Sites for Cats Who Were Trapped, Spayed, and Released")
+
+```
