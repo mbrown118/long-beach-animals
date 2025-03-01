@@ -21,7 +21,7 @@ longbeach <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/
 ```
 
 ```{r}
-view(dfSummary(longbeach))
+# view(dfSummary(longbeach))
 ```
 
 ```{r}
@@ -120,3 +120,18 @@ ggplot() +
   ggtitle("Intake Sites for Cats Who Were Trapped, Spayed, and Released")
 
 ```
+
+```{r}
+top_11_colors <- cats_tnr %>% 
+  count(primary_color) %>% 
+  filter(n >= 10) %>% 
+  pull(primary_color) %>% 
+  str_squish()
+
+
+cats_tnr_by_color <- cats_tnr_sf %>% 
+  filter(primary_color %in% top_11_colors)
+
+
+```
+
