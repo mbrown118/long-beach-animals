@@ -10,6 +10,8 @@ library(summarytools)
 library(tidyverse)
 library(janitor)
 library(usmap)
+library(ggplot2)
+library(sf)
 
 ```
 
@@ -42,5 +44,23 @@ cats_tnr <- longbeach_cats %>%
 
 ```
 
+```{r}
+
+usmap_transform(cats_tnr)
+
+
+cats_tnr_sf <- st_as_sf(cats_tnr, coords = c('longitude', 'latitude'))
+
+cats_tnr_sf <- st_set_crs(cats_tnr_sf, value = 4326)
+
+
+plot_usmap(regions = "counties",
+           include ="06037") +
+  geom_sf(data = cats_tnr_sf)
+
+
+
+
+```
 
 
