@@ -9,7 +9,6 @@ editor: visual
 library(summarytools)
 library(tidyverse)
 library(janitor)
-library(usmap)
 library(ggplot2)
 library(sf)
 
@@ -61,7 +60,7 @@ cats_tnr_sf <- st_as_sf(cats_tnr, coords = c('longitude', 'latitude'))
 
 cats_tnr_sf <- st_set_crs(cats_tnr_sf, value = 4326)
 
-
+  
 ggplot() +
   geom_sf(data = la_county, fill = "grey", alpha = 0.3) +
   geom_sf(data = cats_tnr_sf) +
@@ -134,4 +133,3 @@ cats_tnr_by_color <- cats_tnr_sf %>%
 
 
 ```
-
